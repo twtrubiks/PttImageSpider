@@ -14,5 +14,7 @@ class PttimagespiderItem(scrapy.Item):
     pass
 
 class PttImage(scrapy.Item):
-      file_urls = scrapy.Field()
-      files = scrapy.Field()
+      title = scrapy.Field()
+      image_urls = scrapy.Field()
+      images = scrapy.Field()
+

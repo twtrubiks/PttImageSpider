@@ -15,10 +15,10 @@ SPIDER_MODULES = ['PttImageSpider.spiders']
 NEWSPIDER_MODULE = 'PttImageSpider.spiders'
 
 ITEM_PIPELINES = {
-   'scrapy.contrib.pipeline.images.FilesPipeline': 1,
+   'PttImageSpider.pipelines.PttImagePipeline': 1
 }
 
-FILES_STORE = "/home/twtrubiks/venv/PttImages"
+IMAGES_STORE = '/home/twtrubiks/venv'
 
 
 
