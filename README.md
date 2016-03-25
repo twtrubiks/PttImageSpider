@@ -1,6 +1,7 @@
 # PTT 爬蟲圖片下載器 (使用Scrapy) PttImageSpider
 抓取PTT整個看板的圖片，並用文章標題作為資料夾的名稱 
-* [Demo Video](https://youtu.be/6BHiLOtsW2Y) - Linux (教學+demo  新影片待新增)
+* [Demo Video](https://www.youtube.com/watch?v=B78ZYEjkSaY) - Linux V2 (demo )
+* [Demo Video](https://youtu.be/6BHiLOtsW2Y) - Linux V1 (教學+demo )
 
 ## 特色
 * 抓取PTT特定看板全部的圖片
