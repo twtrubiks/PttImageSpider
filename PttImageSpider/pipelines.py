@@ -5,16 +5,27 @@
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
 
-import string
 import scrapy
-from scrapy.contrib.pipeline.images import ImagesPipeline
+from scrapy.pipelines.images import ImagesPipeline
 from scrapy.exceptions import DropItem
+from pathlib import Path
 
 
-class PttImagePipeline(ImagesPipeline):  
+class PttImagePipeline(ImagesPipeline):
+    def open_spider(self, spider):
+        # 確保圖片目錄存在
+        images_store = Path(spider.settings.get('IMAGES_STORE'))
+        images_store.mkdir(parents=True, exist_ok=True)
+        super().open_spider(spider)  
     def get_media_requests(self, item, info):
         for image_url in item['image_urls']:
-            yield scrapy.Request(image_url, meta = {'item': item})
+            # 對 imgur 圖片特殊處理，避免 403 錯誤
+            if 'imgur.com' in image_url:
+                # 偽裝 Referer 為 imgur 自己
+                yield scrapy.Request(image_url, meta={'item': item},
+                                   headers={'Referer': 'https://imgur.com/'})
+            else:
+                yield scrapy.Request(image_url, meta={'item': item})
     
     def item_completed(self, results, item, info):
         image_paths = [x['path'] for ok, x in results if ok]
@@ -22,10 +33,11 @@ class PttImagePipeline(ImagesPipeline):
             raise DropItem("Item contains no images")
         return item
 
-    def file_path(self, request, response = None, info = None):
-        item = request.meta['item']
+    def file_path(self, request, response=None, info=None, *, item=None):
+        if item is None:
+            item = request.meta.get('item', {})
         #取得網址最後一個字串做為檔名
-        name = string.split(request.url, '/')[-1]
-        filename = u'full/{0[title]}/{1}'.format(item, name)
+        name = request.url.split('/')[-1]
+        filename = '{0[title]}/{1}'.format(item, name)
         return filename
     

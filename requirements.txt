@@ -1,0 +1,3 @@
+Scrapy==2.13.3
+Pillow>=10.0.0
+brotli>=1.0.0

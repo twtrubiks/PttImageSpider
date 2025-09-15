@@ -1,4 +1,3 @@
-#coding=utf8
 from PttImageSpider.items import PttImage
 import scrapy
 
@@ -27,7 +26,7 @@ class PttSpider(scrapy.Spider):
              href_url =  domain + href.xpath('@href')[0].extract()
              title =  href.xpath('text()')[0].extract()
              item = PttImage()
-             item['title'] = remove(title, "\/:*?'<>.;&!|`{}")
+             item['title'] = remove(title, r"\/:*?'<>.;&!|`{}")
              #將 item 的值傳過去因為再來要使用 標題 作為資料夾的名稱
              yield scrapy.Request(href_url, callback = self.parse_images, meta={'item': item})           
          #抓取上(下)一頁的 URL
