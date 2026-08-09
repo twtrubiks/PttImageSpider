@@ -9,24 +9,34 @@
 
 * 抓取PTT特定看板全部的圖片
 * 使用文章標題作為資料夾的名稱
+* 可指定看板，也可只抓特定作者的文章
 * 下載圖片速度非常快，1分鐘可抓600張圖片，平均每秒10張
 
 ## 使用方法
+
+抓取預設看板 (AKB48) 的全部圖片
 
 ```cmd
 scrapy crawl ptt_img_spider
 ```
 
-如需抓其他PTT的看板，需要修改路徑 PttImageSpider/PttImageSpider/spiders/pttspider.py 檔案裡的
+用 `-a board=板名` 指定其他看板，不需要修改程式碼
 
-```python
-start_urls = ["https://www.ptt.cc/bbs/AKB48/index.html"]
+```cmd
+scrapy crawl ptt_img_spider -a board=NounenRena
 ```
 
-將網址修改為其他看板的網址，範例如下
+用 `-a author=作者ID` 只抓特定作者的文章，兩個參數可以一起用
+
+```cmd
+scrapy crawl ptt_img_spider -a author=emperor
+scrapy crawl ptt_img_spider -a board=NounenRena -a author=emperor
+```
+
+如果想直接改掉預設看板，修改 PttImageSpider/PttImageSpider/spiders/pttspider.py 裡的
 
 ```python
-start_urls = ["https://www.ptt.cc/bbs/NounenRena/index.html"]
+default_board = "AKB48"
 ```
 
 ## 執行畫面
@@ -115,6 +125,24 @@ def get_media_requests(self, item, info):
 - imgur 使用此機制防止其他網站直接引用圖片
 
 - 透過修改 Referer，讓 imgur 認為請求來自內部，即可正常下載
+
+### 作者過濾的實作方式
+
+指定 `-a author=` 時，並不是把整個看板翻過一遍再逐篇比對作者，而是改用 PTT 的站內搜尋：
+
+```
+https://www.ptt.cc/bbs/AKB48/search?q=author%3Aemperor
+```
+
+搜尋結果頁的 HTML 結構與看板列表頁完全相同（同樣的 `div.r-ent` 與 `a.btn wide` 分頁按鈕），
+
+所以 `parse()` 不需要任何修改就能直接沿用，只有 `start_urls` 不一樣。
+
+**為什麼不用逐篇過濾：**
+
+看板列表可能有幾千頁，逐篇過濾還是得從頭走到尾，只省下載圖片的時間。
+
+改用站內搜尋則只會走訪確實有該作者文章的頁面，冷門作者甚至只有一頁，差距非常大。
 
 ### 圖片方向自動校正
 
