@@ -16,9 +16,6 @@ BOT_NAME = 'PttImageSpider'
 SPIDER_MODULES = ['PttImageSpider.spiders']
 NEWSPIDER_MODULE = 'PttImageSpider.spiders'
 
-# Scrapy 2.7+ compatibility
-REQUEST_FINGERPRINTER_IMPLEMENTATION = '2.7'
-
 ITEM_PIPELINES = {
    'PttImageSpider.pipelines.PttImagePipeline': 1
 }
