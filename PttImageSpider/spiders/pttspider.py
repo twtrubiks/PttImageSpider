@@ -40,10 +40,10 @@ class PttSpider(scrapy.Spider):
              item['title'] = remove(title, r"\/:*?'<>.;&!|`{}")
              #將 item 的值傳過去因為再來要使用 標題 作為資料夾的名稱
              yield scrapy.Request(href_url, callback = self.parse_images, meta={'item': item})           
-         #抓取上(下)一頁的 URL
-         previouspage = response.xpath('//a[@class="btn wide"]/@href')[1]
-         previouspage =  domain + previouspage.extract()         
-         yield scrapy.Request(previouspage, self.parse)
+         #抓取上一頁的 URL，走到最舊一頁時該按鈕會被停用而取不到，爬蟲就結束
+         previouspage = response.xpath('//a[@class="btn wide"][contains(text(), "上頁")]/@href').get()
+         if previouspage:
+            yield scrapy.Request(domain + previouspage, self.parse)
 
 
       def parse_images(self, response):  

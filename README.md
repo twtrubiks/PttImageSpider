@@ -43,7 +43,32 @@ default_board = "AKB48"
 
 ![alt tag](http://i.imgur.com/loYZHTi.jpg)
 
-有些看板的網頁頁數非常多，所以如果要強迫終止，可以按 Ctrl + Z 強制結束程式
+## 抓取範圍
+
+預設沒有數量限制，會從看板最新的一頁開始，一路往回抓到最舊的第一頁。
+
+因為順序是由新到舊，中途停止的話手上就是最近的那批文章。想「只抓最近的圖」不需要改程式，跑一陣子按 Ctrl + C 中斷即可。
+
+**關於中斷：**
+
+按第一次 Ctrl + C 時 Scrapy 會優雅收尾，把已經在進行中的下載處理完再關閉，並輸出統計資訊。
+
+視當下佇列的長度，這段收尾可能要等數十秒。不想等的話再按第二次 Ctrl + C 會立即強制中斷，但可能留下寫到一半的圖片檔。
+
+也可以用參數限制範圍，不必手動中斷：
+
+```cmd
+scrapy crawl ptt_img_spider -s CLOSESPIDER_ITEMCOUNT=50
+scrapy crawl ptt_img_spider -s CLOSESPIDER_TIMEOUT=300
+```
+
+這兩個都是 Scrapy 內建的設定，用 `-s` 指定只影響這次執行，不會改到 settings.py。
+
+`CLOSESPIDER_ITEMCOUNT` 是抓到幾篇就停。算的是「成功存到圖的文章數」，被判定沒有圖而丟棄的文章不列入計算。
+
+`CLOSESPIDER_TIMEOUT` 是跑幾秒就停，單位是秒，從爬蟲啟動開始計時。
+
+兩者觸發時都是優雅關閉，會先把進行中的下載處理完，所以實際的篇數和時間都會比設定值再多一些。
 
 ## 輸出格式
 
