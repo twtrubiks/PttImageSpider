@@ -33,6 +33,12 @@ DOWNLOAD_TIMEOUT = 30
 RETRY_TIMES = 3
 RETRY_HTTP_CODES = [500, 502, 503, 504, 408, 429]
 
+# 改用廣度優先走訪。Scrapy 預設的 LIFO 佇列會讓同一頁的文章由下往上處理，
+# 也就是最舊的先抓；改成 FIFO 後才會照列表頁由上到下（新到舊）的順序抓
+DEPTH_PRIORITY = 1
+SCHEDULER_MEMORY_QUEUE = 'scrapy.squeues.FifoMemoryQueue'
+SCHEDULER_DISK_QUEUE = 'scrapy.squeues.PickleFifoDiskQueue'
+
 
 
 
